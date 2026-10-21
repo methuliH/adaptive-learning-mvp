@@ -8,7 +8,7 @@ package store
 import (
 	"time"
 
-	"github.com/methuliH/learnsteer-adaptive-mvp/engine"
+	"github.com/methuliH/adaptive-learning-mvp/engine"
 )
 
 type Option struct {

@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/methuliH/learnsteer-adaptive-mvp/engine"
-	"github.com/methuliH/learnsteer-adaptive-mvp/store"
+	"github.com/methuliH/adaptive-learning-mvp/engine"
+	"github.com/methuliH/adaptive-learning-mvp/store"
 )
 
 var (

@@ -10,10 +10,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/methuliH/learnsteer-adaptive-mvp/data"
-	"github.com/methuliH/learnsteer-adaptive-mvp/engine"
-	"github.com/methuliH/learnsteer-adaptive-mvp/practice"
-	"github.com/methuliH/learnsteer-adaptive-mvp/store"
+	"github.com/methuliH/adaptive-learning-mvp/data"
+	"github.com/methuliH/adaptive-learning-mvp/engine"
+	"github.com/methuliH/adaptive-learning-mvp/practice"
+	"github.com/methuliH/adaptive-learning-mvp/store"
 )
 
 func router(t *testing.T) *gin.Engine {

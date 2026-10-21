@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/methuliH/learnsteer-adaptive-mvp/data"
-	"github.com/methuliH/learnsteer-adaptive-mvp/engine"
-	"github.com/methuliH/learnsteer-adaptive-mvp/store"
+	"github.com/methuliH/adaptive-learning-mvp/data"
+	"github.com/methuliH/adaptive-learning-mvp/engine"
+	"github.com/methuliH/adaptive-learning-mvp/store"
 )
 
 func newService(t *testing.T) *Service {

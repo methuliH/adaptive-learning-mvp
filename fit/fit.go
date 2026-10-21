@@ -20,7 +20,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/methuliH/learnsteer-adaptive-mvp/practice"
+	"github.com/methuliH/adaptive-learning-mvp/practice"
 )
 
 var ErrUnavailable = errors.New("pyBKT fitter is not available")

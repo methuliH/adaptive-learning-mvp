@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/methuliH/learnsteer-adaptive-mvp/sim"
+	"github.com/methuliH/adaptive-learning-mvp/sim"
 )
 
 func main() {

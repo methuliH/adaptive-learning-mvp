@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/methuliH/learnsteer-adaptive-mvp/engine"
+	"github.com/methuliH/adaptive-learning-mvp/engine"
 )
 
 // Bank is the JSON shape of a question file.

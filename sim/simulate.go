@@ -13,9 +13,9 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/methuliH/learnsteer-adaptive-mvp/engine"
-	"github.com/methuliH/learnsteer-adaptive-mvp/practice"
-	"github.com/methuliH/learnsteer-adaptive-mvp/store"
+	"github.com/methuliH/adaptive-learning-mvp/engine"
+	"github.com/methuliH/adaptive-learning-mvp/practice"
+	"github.com/methuliH/adaptive-learning-mvp/store"
 )
 
 type Config struct {

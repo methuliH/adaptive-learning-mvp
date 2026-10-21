@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/methuliH/learnsteer-adaptive-mvp/fit"
-	"github.com/methuliH/learnsteer-adaptive-mvp/practice"
-	"github.com/methuliH/learnsteer-adaptive-mvp/sim"
+	"github.com/methuliH/adaptive-learning-mvp/fit"
+	"github.com/methuliH/adaptive-learning-mvp/practice"
+	"github.com/methuliH/adaptive-learning-mvp/sim"
 )
 
 func (h *Handler) GetParams(c *gin.Context) {

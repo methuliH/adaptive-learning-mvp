@@ -1,4 +1,4 @@
-module github.com/methuliH/learnsteer-adaptive-mvp
+module github.com/methuliH/adaptive-learning-mvp
 
 go 1.24
 
