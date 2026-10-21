@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LearnSteer Adaptive Practice</title>
+<style>
+  :root {
+    --bg: #f6f7f5; --card: #ffffff; --ink: #1c2321; --quiet: #5d6863; --line: #dfe4e1;
+    --brand: #059669; --brand-soft: #e3f4ee; --bad: #c2410c; --bad-soft: #fdeee6;
+    --easy: #0f766e; --medium: #b45309; --hard: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { background: var(--card); border-bottom: 1px solid var(--line); padding: 14px 24px;
+           display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  header h1 { font-size: 17px; margin: 0; }
+  header .tag { font-size: 12px; color: var(--quiet); }
+  header .spacer { flex: 1; }
+  header label { font-size: 13px; color: var(--quiet); }
+  input, select { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--ink); }
+  button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 14px; }
+  button.primary { background: var(--brand); border-color: var(--brand); color: #fff; font-weight: 600; }
+  button:disabled { opacity: .5; cursor: default; }
+  main { max-width: 1080px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .card h2 { font-size: 14px; margin: 0 0 12px; color: var(--quiet); text-transform: uppercase; letter-spacing: .04em; }
+  .unit { display: block; width: calc(100% + 12px); text-align: left; border: 0; background: none; margin: 0 -6px 14px; padding: 6px; border-radius: 8px; }
+  .unit:hover, .unit.active { background: var(--brand-soft); }
+  .unit-top { display: flex; justify-content: space-between; font-size: 14px; }
+  .unit-top b { font-weight: 600; }
+  .bar { display: block; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+  .bar > span { display: block; height: 100%; background: var(--brand); transition: width .5s; }
+  .unit small { display: block; color: var(--quiet); font-size: 12px; }
+  .side-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .side-actions a { font-size: 13px; color: var(--brand); align-self: center; }
+  .meta { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 13px; color: var(--quiet); flex-wrap: wrap; }
+  .badge { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; color: #fff; text-transform: capitalize; }
+  .badge.easy { background: var(--easy); } .badge.medium { background: var(--medium); } .badge.hard { background: var(--hard); }
+  .badge.retry { background: var(--quiet); text-transform: none; }
+  .qtext { font-size: 18px; margin: 4px 0 16px; }
+  .opt { display: flex; gap: 10px; align-items: flex-start; width: 100%; text-align: left; margin-bottom: 8px; padding: 10px 12px; }
+  .opt .k { font-weight: 700; color: var(--quiet); min-width: 18px; }
+  .opt.chosen { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand) inset; }
+  .opt.right { border-color: var(--brand); background: var(--brand-soft); }
+  .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+  .feedback { margin-top: 14px; padding: 14px; border-radius: 10px; }
+  .feedback.ok { background: var(--brand-soft); } .feedback.no { background: var(--bad-soft); }
+  .feedback h3 { margin: 0 0 6px; font-size: 16px; }
+  .delta { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .row { display: flex; gap: 10px; margin-top: 14px; align-items: center; flex-wrap: wrap; }
+  .notice { margin-bottom: 12px; padding: 10px 12px; border-radius: 8px; background: var(--brand-soft); font-size: 14px; }
+  .notice.celebrate { font-weight: 600; }
+  .log { margin-top: 20px; }
+  .log table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .log th, .log td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+  .log th { color: var(--quiet); font-weight: 500; }
+  .num { font-variant-numeric: tabular-nums; }
+  .empty { color: var(--quiet); }
+  .model { margin-top: 20px; }
+  .model p { margin: 0 0 12px; font-size: 14px; color: var(--quiet); }
+  .model table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .model th, .model td { text-align: right; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+  .model th:first-child, .model td:first-child { text-align: left; }
+  .model th { color: var(--quiet); font-weight: 500; }
+  .model .truth td { color: var(--quiet); border-bottom-style: dashed; font-size: 12px; }
+  .src { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 999px; background: var(--line); color: var(--ink); }
+  .src.fitted { background: var(--brand); color: #fff; }
+  .status { font-size: 13px; color: var(--quiet); }
+  .status.err { color: var(--bad); }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>LearnSteer Adaptive Practice</h1>
+    <div class="tag">MVP: Bayesian Knowledge Tracing with difficulty tags</div>
+  </div>
+  <div class="spacer"></div>
+  <label>Subject <select id="subject"></select></label>
+  <label>Student <input id="user" size="12"></label>
+</header>
+
+<main>
+  <aside class="card">
+    <h2>Mastery by unit</h2>
+    <div id="units"><div class="empty">Loading…</div></div>
+    <div class="side-actions">
+      <button id="practiceWeakest">Practise weakest</button>
+      <button id="reset">Reset student</button>
+      <a href="/api/v1/practice/export.csv">Export pyBKT CSV</a>
+    </div>
+  </aside>
+
+  <section>
+    <div class="card" id="quiz"><div class="empty">Loading…</div></div>
+    <div class="card log">
+      <h2>This session</h2>
+      <table>
+        <thead><tr><th>#</th><th>Unit</th><th>Difficulty</th><th>Result</th><th>Mastery</th></tr></thead>
+        <tbody id="log"><tr><td colspan="5" class="empty">No answers yet.</td></tr></tbody>
+      </table>
+    </div>
+    <div class="card model">
+      <h2>BKT model (pyBKT)</h2>
+      <p>The engine starts every unit on hand-set defaults. Add simulated history, then fit with pyBKT to replace them with values learned from the answers.</p>
+      <table>
+        <thead><tr><th>Unit</th><th>Prior</th><th>Learn</th><th>Guess</th><th>Slip</th><th>Answers</th><th>Source</th></tr></thead>
+        <tbody id="params"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+      </table>
+      <div class="row">
+        <button id="simulate">Add 150 simulated students</button>
+        <button class="primary" id="fit">Fit with pyBKT</button>
+        <span class="status" id="modelStatus"></span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const API = '/api/v1';
+const $ = id => document.getElementById(id);
+const pct = p => Math.round(p * 100) + '%';
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let state = { subject: '', skill: '', current: null, answered: false, log: [], truth: null };
+
+function user() {
+  let u = $('user').value.trim();
+  if (!u) { u = 'student-' + Math.floor(Math.random() * 9000 + 1000); $('user').value = u; }
+  try { localStorage.setItem('adaptive-user', u); } catch (e) {}
+  return u;
+}
+
+async function call(method, path, body) {
+  const res = await fetch(API + path, {
+    method,
+    headers: { 'Content-Type': 'application/json', 'X-User-ID': user() },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'Request failed');
+  return json.data;
+}
+
+async function loadMastery() {
+  const units = await call('GET', '/practice/mastery?subject_id=' + encodeURIComponent(state.subject));
+  $('units').innerHTML = units.map(u => `
+    <button class="unit ${u.skill === state.skill ? 'active' : ''}" data-skill="${esc(u.skill)}" aria-label="Practise ${esc(u.skill)}, ${pct(u.mastery)} mastery">
+      <span class="unit-top"><b>${esc(u.skill)}</b><span class="num">${pct(u.mastery)}</span></span>
+      <span class="bar"><span style="width:${u.mastery * 100}%"></span></span>
+      <small>${u.mastered ? 'Mastered' : 'Next: ' + u.target_difficulty} · ${u.attempts} answered</small>
+    </button>`).join('');
+  document.querySelectorAll('.unit').forEach(el =>
+    el.addEventListener('click', () => next(el.dataset.skill)));
+}
+
+function renderQuestion(resp, notice) {
+  state.current = resp.question;
+  state.answered = false;
+  if (resp.done) {
+    $('quiz').innerHTML = `${notice || ''}<h3>All done here</h3><p>${esc(resp.message)}</p>
+      <div class="row"><button id="restart">Reset and try again</button></div>`;
+    $('restart').onclick = resetUser;
+    return;
+  }
+  state.skill = resp.skill;
+  const q = resp.question;
+  $('quiz').innerHTML = `
+    ${notice || ''}
+    ${resp.message ? `<div class="notice">${esc(resp.message)}</div>` : ''}
+    <div class="meta"><span>${esc(q.skill)}</span><span class="badge ${q.difficulty}">${q.difficulty}</span>
+      ${resp.retry ? '<span class="badge retry" title="You got this one wrong earlier">Second try</span>' : ''}
+      <span>Your mastery: <b class="num">${pct(resp.mastery)}</b></span></div>
+    <div class="qtext">${esc(q.text)}</div>
+    <div id="options">${q.options.map(o =>
+      `<button class="opt" data-key="${esc(o.key)}"><span class="k">${esc(o.key.toUpperCase())}</span><span>${esc(o.text)}</span></button>`
+    ).join('')}</div>
+    <div id="feedback"></div>`;
+  document.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => answer(b.dataset.key)));
+  loadMastery();
+}
+
+async function next(skill) {
+  try {
+    const resp = await call('POST', '/practice/next', { subject_id: state.subject, skill: skill || '' });
+    renderQuestion(resp);
+  } catch (e) { $('quiz').innerHTML = `<div class="notice">${esc(e.message)}</div>`; }
+}
+
+async function answer(key) {
+  if (state.answered) return;
+  state.answered = true;
+  document.querySelectorAll('.opt').forEach(b => { b.disabled = true; if (b.dataset.key === key) b.classList.add('chosen'); });
+  let r;
+  try { r = await call('POST', '/practice/answer', { question_id: state.current.id, selected_option: key }); }
+  catch (e) { $('feedback').innerHTML = `<div class="notice">${esc(e.message)}</div>`; return; }
+
+  document.querySelectorAll('.opt').forEach(b => {
+    if (b.dataset.key === r.correct_option) b.classList.add('right');
+    else if (b.dataset.key === key) b.classList.add('wrong');
+  });
+  const up = r.mastery_after >= r.mastery_before;
+  $('feedback').innerHTML = `
+    <div class="feedback ${r.is_correct ? 'ok' : 'no'}">
+      <h3>${r.is_correct ? 'Correct' : 'Not quite'}: the answer is ${esc(r.correct_option.toUpperCase())}</h3>
+      <div>${esc(r.explanation)}</div>
+      <div class="row">${esc(r.skill)} mastery
+        <span class="delta">${pct(r.mastery_before)} → ${pct(r.mastery_after)} ${up ? '▲' : '▼'}</span></div>
+    </div>
+    <div class="row"><button class="primary" id="nextBtn">${r.next.done ? 'Finish' : 'Next question'}</button>
+      ${r.next.done ? '' : `<span class="tag">Next up: ${esc(r.next.skill)}, ${r.next.target_difficulty}</span>`}</div>`;
+
+  state.log.unshift({ n: state.log.length + 1, skill: r.skill, diff: state.current.difficulty, ok: r.is_correct, before: r.mastery_before, after: r.mastery_after });
+  renderLog();
+  loadMastery();
+
+  const notice = r.just_mastered
+    ? `<div class="notice celebrate">${esc(r.skill)} mastered! Moving to your weakest unit.</div>` : '';
+  $('nextBtn').onclick = () => renderQuestion(r.next, notice);
+}
+
+function renderLog() {
+  $('log').innerHTML = state.log.length ? state.log.map(l => `
+    <tr><td class="num">${l.n}</td><td>${esc(l.skill)}</td><td><span class="badge ${l.diff}">${l.diff}</span></td>
+      <td>${l.ok ? 'Correct' : 'Wrong'}</td><td class="num">${pct(l.before)} → ${pct(l.after)}</td></tr>`).join('')
+    : '<tr><td colspan="5" class="empty">No answers yet.</td></tr>';
+}
+
+const num = v => v.toFixed(2);
+
+async function loadParams() {
+  const rows = await call('GET', '/model/params?subject_id=' + encodeURIComponent(state.subject));
+  $('params').innerHTML = rows.map(p => {
+    const t = state.truth && state.truth[p.skill];
+    return `<tr><td>${esc(p.skill)}</td><td>${num(p.prior)}</td><td>${num(p.learn)}</td><td>${num(p.guess)}</td>
+      <td>${num(p.slip)}</td><td>${p.answers || '–'}</td><td><span class="src ${p.source}">${p.source}</span></td></tr>` +
+      (t ? `<tr class="truth"><td>simulated truth</td><td>${num(t.prior)}</td><td>${num(t.learn)}</td><td>${num(t.guess)}</td><td>${num(t.slip)}</td><td></td><td></td></tr>` : '');
+  }).join('');
+}
+
+function modelStatus(text, isErr) {
+  $('modelStatus').textContent = text;
+  $('modelStatus').className = 'status' + (isErr ? ' err' : '');
+}
+
+async function simulate() {
+  $('simulate').disabled = true;
+  modelStatus('Simulating students…');
+  try {
+    const r = await call('POST', '/model/simulate', { subject_id: state.subject, students: 150, steps: 20 });
+    state.truth = r.truth;
+    modelStatus(`Added ${r.answers} answers from ${r.students} simulated students.`);
+    loadParams();
+  } catch (e) { modelStatus(e.message, true); }
+  $('simulate').disabled = false;
+}
+
+async function fitModel() {
+  $('fit').disabled = true;
+  modelStatus('Fitting with pyBKT… this can take a minute.');
+  try {
+    const r = await call('POST', '/model/fit');
+    const skipped = r.skipped && r.skipped.length ? ` Skipped: ${r.skipped.map(s => s.skill + ' (' + s.reason + ')').join('; ')}.` : '';
+    modelStatus(`Fitted ${r.params.length} unit(s) from ${r.rows} answers in ${Math.round(r.seconds)}s.${skipped}`);
+    loadParams();
+    // New priors can change the student's mastery and target difficulty
+    if (state.answered) loadMastery(); else next(state.skill);
+  } catch (e) { modelStatus(e.message, true); }
+  $('fit').disabled = false;
+}
+
+async function resetUser() {
+  await call('POST', '/practice/reset');
+  state.log = []; state.skill = '';
+  renderLog();
+  next('');
+}
+
+async function init() {
+  try { $('user').value = localStorage.getItem('adaptive-user') || ''; } catch (e) {}
+  user();
+  const res = await fetch(API + '/subjects').then(r => r.json());
+  $('subject').innerHTML = res.data.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
+  state.subject = res.data[0].id;
+  $('subject').onchange = () => { state.subject = $('subject').value; state.skill = ''; state.truth = null; next(''); loadParams(); };
+  $('user').onchange = () => { state.log = []; state.skill = ''; renderLog(); next(''); };
+  $('practiceWeakest').onclick = () => next('');
+  $('reset').onclick = resetUser;
+  $('simulate').onclick = simulate;
+  $('fit').onclick = fitModel;
+  next('');
+  loadParams();
+}
+init();
+</script>
+</body>
+</html>

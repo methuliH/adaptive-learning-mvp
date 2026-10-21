@@ -1,0 +1,5 @@
+sim_answers.csv
+bkt_answers.csv
+*.exe
+.venv/
+__pycache__/

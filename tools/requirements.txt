@@ -1,0 +1,7 @@
+# pyBKT 1.4.3 needs these pins when it runs without its C++ extension:
+#   scikit-learn >= 1.8 makes `import pyBKT` crash (AttributeError while it probes metrics)
+#   numpy >= 2.4 makes fitting crash ("setting an array element with a sequence")
+pyBKT==1.4.3
+scikit-learn==1.7.2
+numpy==2.3.5
+pandas
